@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background: black;
+        }
+    #gameArea {
+      position: absolute;
+      left: 50%;
+      top:50%;
+    }
+    #gameCanvas {
+      width: 100%;
+      height: 100%;
+      background: green;
+    }
+
+    #advertizing{
+      position: absolute;
+      width: 100%;
+      height: 8%;
+      bottom: 0;
+      opacity: 0.8;
+    }
+    
+    </style>
+</head>
+<body>
+  <div id='gameArea'>
+    <canvas id="gameCanvas"></canvas>
+    <div id='advertizing'>рекламма</div>
+  </div>
+    
+    <script>
+        let gameCanvas = document.getElementById('gameCanvas');
+        let ctx = gameCanvas.getContext('2d');
+        let gameArea = document.getElementById('gameArea'),
+            x =0, 
+            y =0,
+            sx = 0,
+            sy = 128,
+            sw = 64,
+            sh = 64,
+            goSpeed = 5,
+            goLeft = false, 
+            goRight = false,
+            goUp = false,
+            goDown = false,
+            frames = 0,
+            currentFrame = 0,
+            dt=0,
+            imageHuman = new Image();
+            
+        function drawHuman(){
+            imageHuman.src = 'img/sprite/human.png';
+            ctx.drawImage(imageHuman, sw * currentFrame, sy, sw, sh, (gameCanvas.width-sw)/2, (gameCanvas.height-sh)/2, sw, sh);
+            if(dt<3) {
+                dt++;
+            } else {
+                dt=0
+                if (currentFrame == frames) {
+                currentFrame = 0;
+            } else {
+                currentFrame++;
+            }
+            }
+        }
+
+            function resizeGame() {
+                console.log('изменение размера экрана')
+                
+                //let widthToHeight = 6 / 4; //пропорции игры ширина и высота
+                let newWidth = window.innerWidth; // новая ширина игры
+                let newHeight = window.innerHeight; // новая высота игры
+                gameArea.style.width = newWidth + 'px';
+                gameArea.style.height = newHeight + 'px';
+                /* let newWidthToHeight = newWidth / newHeight; // соотношение текущей ширины и высоты экрана
+                if (newWidthToHeight > widthToHeight) {
+                    // ширина окна шире, чем желаемая ширина игры 
+                    newWidth = Math.floor(newHeight * widthToHeight) ;
+                    gameArea.style.height = newHeight + 'px';
+                    gameArea.style.width = newWidth + 'px';
+                } else { // высота окна выше желаемой высоты игры
+                    newHeight =Math.floor(newWidth / widthToHeight);
+                    gameArea.style.width = newWidth + 'px';
+                    gameArea.style.height = newHeight + 'px';
+                } */
+                
+                gameArea.style.marginTop = (-newHeight / 2) + 'px'; // выставляем отступы так,
+                gameArea.style.marginLeft = (-newWidth / 2) + 'px'; // чтоб игровая область была по центру
+                //gameArea.style.fontSize = (newWidth / 400) + 'em'; // размер шрифта по экрану
+
+                
+                gameCanvas.width = newWidth;
+                gameCanvas.height = newHeight;
+                console.log('итог', gameCanvas.width,gameCanvas.height)
+            }
+            resizeGame();
+            window.addEventListener('resize', resizeGame, false);
+            window.addEventListener('orientationchange', resizeGame , false);
+            document.addEventListener('keydown',keyDownHandler,false);
+        // при нажатии разрешает движение
+        function keyDownHandler(e){
+          if(e.keyCode==37){goLeft=true,sy=581,frames=8}
+            else if(e.keyCode==38){goUp=true,sy=517,frames=8}
+            else if(e.keyCode==39){goRight=true,sy=709,frames=8}
+            else if(e.keyCode==40){goDown=true,sy=645,frames=8}
+    }     
+    document.addEventListener('keyup',keyUpHandler,false);
+        // при отжатии запрещает движение
+        function keyUpHandler(e){
+          /* if(e.keyCode==32){cutTree()}
+          
+           else */ if(e.keyCode==37){goLeft=false}
+            else if(e.keyCode==38){goUp=false}
+            else if(e.keyCode==39){goRight=false}
+            else if(e.keyCode==40){goDown=false}
+            if(goLeft,goRight,goUp,goDown==false){frames=0, currentFrame=0, sy=128}
+          
+    }   
+            
+            function draw(){
+        ctx.clearRect(0,0,gameCanvas.width,gameCanvas.height);
+        if(goLeft){x-=goSpeed} else if(goUp){y-=goSpeed} else if(goRight){x+=goSpeed} else if(goDown){y+=goSpeed}
+        
+        drawHuman();     
+    requestAnimationFrame(draw);
+ }
+ 
+    draw();
+        
+    </script>
+</body>
+</html>
